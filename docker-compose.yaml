@@ -1,0 +1,67 @@
+version: '3'
+services:
+  frontend:
+    build:
+      dockerfile: ./front/Dockerfile
+      context: . 
+    container_name: front
+    ports:
+      - 5173:5173
+    volumes:
+      - ./front:/app
+      - /app/node_modules #  que ela faz é criar um volume anônimo com a pasta node_modules que estava na imagem, pois o docker não a deletou quando escreveu sobre, dessa maneira ele “ressuscita” a pasta node_modules da imagem e a torna utilizável novamente.
+    restart: always
+    working_dir: /app
+    entrypoint: ['npm', 'run']
+    command: [ 'docker']
+    depends_on:
+      back:
+        condition: service_started
+      database:
+        condition: service_healthy
+  back:
+    # Faz o docker construir (build) de uma imagem personalizada
+    # baseada no arquivo Dockerfile
+    build: 
+      dockerfile: ./back/Dockerfile
+      context: .
+    # Nome do container para facilitar execução
+    container_name: back
+    # Restarta a imagem caso algo a faça parar
+    restart: always
+    # Diretório padrão de execução
+    working_dir: /app
+    # Lista de volumes (diretórios) mapeados de fora para dentro do container
+    volumes:
+      # Monta o diretório atual, com todos os dados da aplicação, dentro do diretório /app
+      - ./back:/app
+      - /app/node_modules
+    ports:
+      # Expõe a porta padrão da aplicação: altere aqui caso use outra porta
+      # na notação porta_de_fora:porta_de_dentro
+      - 3001:3001
+    environment:
+      # Aqui setamos nossas variáveis de ambiente - não se preocupe, mais para frente, ainda nesse dia, temos
+      # uma seção inteira destinada a explicá-las!
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_HOST: database
+      MYSQL_PORT: 3306
+      PORT: 3001
+    env_file:
+      - ./back/.env
+    # Informa ao docker, para que o container node seja iniciado após o container database
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: mysql:8.0.29
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+    ports:
+      - "33060:3306"
+    volumes:
+      - ./back/script.sql:/docker-entrypoint-initdb.d/script.sql
