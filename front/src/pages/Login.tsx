@@ -32,12 +32,12 @@ function Login() {
   const handleClick = () => {
     const { email } = formData;
     localStorage.setItem('user', JSON.stringify({ email }));
-    navigate('/meals');
+    navigate('/people');
   };
 
   return (
     <div>
-      <form onChange={handleChange}>
+      <form onChange={handleChange} className="bg-slate-700">
         <h1>LOGIN</h1>
         <div>
           <input
