@@ -1,24 +1,24 @@
+DROP DATABASE IF EXISTS db;
+
 CREATE DATABASE db;
 
 USE db;
 
 CREATE TABLE
-    types (
-        id INT NOT NULL AUTO_INCREMENT,
-        function VARCHAR(20) NOT NULL,
-        PRIMARY KEY(id)
+    types(
+        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+        `function` VARCHAR(20) NOT NULL
     );
 
-INSERT INTO types (function) VALUES ('administrador'), ('cliente');
+INSERT INTO types (`function`) VALUES ('administrador'), ('cliente');
 
 CREATE TABLE
-    people (
-        id INT NOT NULL AUTO_INCREMENT,
+    people(
+        id INTEGER PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(100) NOT NULL,
         password VARCHAR(100) NOT NULL,
         type_id INT NOT NULL,
-        PRIMARY KEY(id),
         FOREIGN KEY (type_id) REFERENCES types (id)
     );
 
@@ -27,13 +27,13 @@ INSERT INTO
 VALUES (
         'root',
         'root@gmail.com',
-        'rootname',
+        '$2b$10$xzLCcwKNPmkfGX1HSBG8fulZUshwXZWhbXn/aC12OnxNUibR3JwKO',
         1
     );
 
 CREATE TABLE
-    address (
-        id INT NOT NULL AUTO_INCREMENT,
+    address(
+        id INTEGER PRIMARY KEY AUTO_INCREMENT,
         cep INT NOT NULL,
         uf VARCHAR (20) NOT NULL,
         city VARCHAR(20) NOT NULL,
