@@ -3,4 +3,4 @@
 Usuario Root
 
 {email:'root@gmail.com',
-password,'rootname'} 
+password,'rootname'}
