@@ -29,6 +29,16 @@ VALUES (
         'root@gmail.com',
         '$2b$10$xzLCcwKNPmkfGX1HSBG8fulZUshwXZWhbXn/aC12OnxNUibR3JwKO',
         1
+    ), (
+        'Carlos',
+        'carlos@gmail.com',
+        '$2b$10$xzLCcwKNPmkfGX1HSBG8fulZUshwXZWhbXn/aC12OnxNUibR3JwKO',
+        2
+    ), (
+        'Amanda',
+        'amanda@gmail.com',
+        '$2b$10$xzLCcwKNPmkfGX1HSBG8fulZUshwXZWhbXn/aC12OnxNUibR3JwKO',
+        2
     );
 
 CREATE TABLE
@@ -43,4 +53,35 @@ CREATE TABLE
         complement VARCHAR(30),
         people_id INT NOT NULL,
         FOREIGN KEY (people_id) REFERENCES people (id)
+    );
+
+INSERT INTO
+    address (
+        cep,
+        uf,
+        city,
+        district,
+        street,
+        number,
+        complement,
+        people_id
+    )
+VALUES (
+        55940000,
+        'PE',
+        'Condado',
+        'Centro',
+        'Rua Louro',
+        120,
+        'Casa',
+        2
+    ), (
+        55940000,
+        'RJ',
+        'Niteroi',
+        'Centro',
+        'Rua Louro',
+        110,
+        'Casa',
+        3
     );
