@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const conn = require('../db/connection');
 
 const getAllUsers = async () => {
@@ -19,4 +20,24 @@ const getUser = async (id) => {
   return data;
 };
 
-module.exports = { getAllUsers, getUser };
+const createPasssword = (password) => {
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
+  return hash;
+};
+
+const createUser = async (user) => {
+  const { name, email, password, type_id, cep, uf, city, district,
+    street, number, complement } = user;
+  const newPassword = createPasssword(password);
+  const [result] = await conn.execute(`INSERT INTO people (name, email, password, type_id) 
+  VALUES (?, ?, ?, ?)`, [name, email, newPassword, type_id]);
+
+  const peopleId = result.insertId;
+  await conn.execute(`INSERT INTO  address (cep, uf, city, district, 
+  street, number, complement, people_id) VALUES (?, ?, ?, ?, ?, ? , ?, ?)`,
+    [cep, uf, city, district, street, number, complement, peopleId]);
+
+};
+
+module.exports = { getAllUsers, getUser, createUser };
