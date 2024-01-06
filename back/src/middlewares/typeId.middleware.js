@@ -1,6 +1,5 @@
 const typeId = (req, res, next) => {
     const obj = req.body;
-
     if (!Object.keys(obj).includes('type_id')) {
         return res.status(404).json({ message: 'Campo type_id requerido' });
     }

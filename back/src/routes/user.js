@@ -1,5 +1,6 @@
 const express = require('express');
-const { getAllUsers, getUser, createUser, uptadeUser } = require('../services/user.service');
+const { getAllUsers, getUser, createUser, uptadeUser,
+  deleteUser } = require('../services/user.service');
 const { authorization } = require('../middlewares/authorization.middleware');
 const { paramId } = require('../middlewares/paramId.middeware');
 const { name } = require('../middlewares/name.middleware');
@@ -30,7 +31,7 @@ router.get('/user/:id', authorization, paramId, async (req, res) => {
 router.post('/user', authorization, name, email, password, typeId, cep,
   uf, city, district, street, number, complement, async (req, res) => {
     const newUser = req.body;
-    const user = await createUser(newUser);
+    await createUser(newUser);
     res.status(201).json({ message: 'Usuário criado com sucesso' });
   });
 
@@ -38,7 +39,14 @@ router.put('/user/:id', authorization, paramId, name, email, password, typeId, c
   uf, city, district, street, number, complement, async (req, res) => {
     const { id } = req.params;
     const newUser = req.body;
-    const user = await uptadeUser(newUser, Number(id));
+    await uptadeUser(newUser, Number(id));
     res.status(200).json({ message: 'Usuário atualizado com sucesso' });
   });
+
+router.delete('/user/:id', authorization, paramId, async (req, res) => {
+  const { id } = req.params;
+  await deleteUser(Number(id));
+  res.status(202).end();
+});
+
 module.exports = router;

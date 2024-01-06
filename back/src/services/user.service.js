@@ -27,11 +27,11 @@ const createPasssword = (password) => {
 };
 
 const createUser = async (user) => {
-  const { name, email, password, type_id, cep, uf, city, district,
+  const { name, email, password, type_id: type, cep, uf, city, district,
     street, number, complement } = user;
   const newPassword = createPasssword(password);
   const [result] = await conn.execute(`INSERT INTO people (name, email, password, type_id) 
-  VALUES (?, ?, ?, ?)`, [name, email, newPassword, type_id]);
+  VALUES (?, ?, ?, ?)`, [name, email, newPassword, type]);
 
   const peopleId = result.insertId;
   await conn.execute(`INSERT INTO  address (cep, uf, city, district, 
@@ -40,12 +40,12 @@ const createUser = async (user) => {
 };
 
 const uptadeUser = async (user, id) => {
-  const { name, email, password, type_id, cep, uf, city, district,
+  const { name, email, password, type_id: type, cep, uf, city, district,
     street, number, complement } = user;
   const newPassword = createPasssword(password);
   await conn.execute(`UPDATE people SET 
     name = ?, email = ?, password = ?, type_id = ?
-    WHERE id = ?`, [name, email, newPassword, type_id, id]);
+    WHERE id = ?`, [name, email, newPassword, type, id]);
   await conn.execute(`UPDATE address SET 
     cep = ?, uf = ?, city = ?, district = ?, street = ?, 
     number = ?, complement = ? 
@@ -53,4 +53,17 @@ const uptadeUser = async (user, id) => {
     [cep, uf, city, district, street, number, complement, id]);
 };
 
-module.exports = { getAllUsers, getUser, createUser, uptadeUser };
+const deleteUser = (id) => {
+  conn.execute(
+    `DELETE FROM address 
+    WHERE people_id = ?`,
+    [id],
+  );
+  conn.execute(
+    `DELETE FROM people 
+    WHERE id = ?`,
+    [id],
+  );
+};
+
+module.exports = { getAllUsers, getUser, createUser, uptadeUser, deleteUser };

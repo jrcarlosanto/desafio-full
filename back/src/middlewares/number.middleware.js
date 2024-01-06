@@ -1,6 +1,5 @@
 const number = (req, res, next) => {
     const obj = req.body;
-
     if (!Object.keys(obj).includes('number')) {
         return res.status(404).json({ message: 'Campo number requerido' });
     }
