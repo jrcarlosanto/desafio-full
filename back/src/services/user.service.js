@@ -37,7 +37,20 @@ const createUser = async (user) => {
   await conn.execute(`INSERT INTO  address (cep, uf, city, district, 
   street, number, complement, people_id) VALUES (?, ?, ?, ?, ?, ? , ?, ?)`,
     [cep, uf, city, district, street, number, complement, peopleId]);
-
 };
 
-module.exports = { getAllUsers, getUser, createUser };
+const uptadeUser = async (user, id) => {
+  const { name, email, password, type_id, cep, uf, city, district,
+    street, number, complement } = user;
+  const newPassword = createPasssword(password);
+  await conn.execute(`UPDATE people SET 
+    name = ?, email = ?, password = ?, type_id = ?
+    WHERE id = ?`, [name, email, newPassword, type_id, id]);
+  await conn.execute(`UPDATE address SET 
+    cep = ?, uf = ?, city = ?, district = ?, street = ?, 
+    number = ?, complement = ? 
+    WHERE people_id = ?`,
+    [cep, uf, city, district, street, number, complement, id]);
+};
+
+module.exports = { getAllUsers, getUser, createUser, uptadeUser };
