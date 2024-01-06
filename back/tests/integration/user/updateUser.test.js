@@ -8,33 +8,17 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Post /user', function () {
+describe('Put /user/:id', function () {
 
   afterEach(sinon.restore);
 
-  it('Post user com sucesso', async function () {
+  it('Put user/:id com sucesso', async function () {
     sinon.stub(connection, 'execute')
-      .resolves([[
-        {
-          id: 2,
-          name: 'Carlos',
-          email: 'carlos@gmail.com',
-          type_id: 2,
-        }]])
-      .resolves([[
-        {
-          cep: 55940000,
-          uf: 'PE',
-          city: 'Condado',
-          district: 'Centro',
-          street: 'Rua Louro',
-          number: 120,
-          complement: 'Casa',
-          people_id: 2
-        }]]);
+      .resolves()
+      .resolves();
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -50,34 +34,43 @@ describe('Post /user', function () {
         complement: 'Casa'
       });
 
-    expect(response.status).to.equal(201);
-    expect(response.body.message).to.equal('Usuário criado com sucesso');
+    expect(response.status).to.equal(200);
+    expect(response.body.message).to.equal('Usuário atualizado com sucesso');
   });
 
 
-  it('Post user com o token não encontrado', async function () {
+  it('Put user/:id com o token não encontrado', async function () {
 
     const response = await chai.request(app)
-      .post('/user');
+      .put('/user/2');
 
     expect(response.status).to.equal(401);
     expect(response.body.message).to.equal('Token não encontrado');
   });
 
-  it('Post user com toke inválido', async function () {
+  it('Put user/:id com toke inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e');
 
     expect(response.status).to.equal(401);
     expect(response.body.message).to.equal('Token inválido');
   });
 
-  it('Post user com campo name faltando', async function () {
+  it('Put user/:id onde id é uma string', async function () {
+    const response = await chai.request(app)
+      .put('/user/2dssd')
+      .set('authorization', '52aedf85d7542e28');
+
+    expect(response.status).to.equal(404);
+    expect(response.body.message).to.equal('O parametro "id" deve ser um número inteiro maior ou igual a 0');
+  });
+
+  it('Put user/:id com campo name faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         email: 'carlos@gmail.com',
@@ -96,10 +89,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo name requerido');
   });
 
-  it('Post user com campo name inválido', async function () {
+  it('Put user/:id com campo name inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'A',
@@ -119,10 +112,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "name" deve ter mais de 2 caracteres');
   });
 
-  it('Post user com campo email faltando', async function () {
+  it('Put user/:id com campo email faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Jose',
@@ -141,10 +134,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo email requerido');
   });
 
-  it('Post user com campo email inválido', async function () {
+  it('Put user/:id com campo email inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Jose',
@@ -164,10 +157,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "email" deve ter o formato "email@email.com"');
   });
 
-  it('Post user com campo password faltando', async function () {
+  it('Put user/:id com campo password faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Jose',
@@ -186,10 +179,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo password requerido');
   });
 
-  it('Post user com campo password inválido', async function () {
+  it('Put user/:id com campo password inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Jose',
@@ -210,10 +203,10 @@ describe('Post /user', function () {
   });
 
 
-  it('Post user com campo  type_id faltando', async function () {
+  it('Put user/:id com campo  type_id faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Jose',
@@ -232,10 +225,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo type_id requerido');
   });
 
-  it('Post user com campo type_id número inválido', async function () {
+  it('Put user/:id com campo type_id número inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Jose',
@@ -255,10 +248,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "type_id" deve ver maior que 0');
   });
 
-  it('Post user com campo type_id com string', async function () {
+  it('Put user/:id com campo type_id com string', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Jose',
@@ -278,10 +271,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "type_id" deve ser um número');
   });
 
-  it('Post user com campo cep faltando', async function () {
+  it('Put user/:id com campo cep faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -300,10 +293,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo cep requerido');
   });
 
-  it('Post user com campo cep inválido', async function () {
+  it('Put user/:id com campo cep inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -323,10 +316,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "cep" deve ter mais de 7 caracteres');
   });
 
-  it('Post user com campo uf faltando', async function () {
+  it('Put user/:id com campo uf faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -345,10 +338,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo uf requerido');
   });
 
-  it('Post user com campo uf inválido', async function () {
+  it('Put user/:id com campo uf inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -368,10 +361,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "uf" deve ter mais de 2 caracteres');
   });
 
-  it('Post user com campo city faltando', async function () {
+  it('Put user/:id com campo city faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -390,10 +383,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo city requerido');
   });
 
-  it('Post user com campo city inválido', async function () {
+  it('Put user/:id com campo city inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -413,10 +406,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "city" deve ter mais de 2 caracteres');
   });
 
-  it('Post user com campo district faltando', async function () {
+  it('Put user/:id com campo district faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -435,10 +428,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo district requerido');
   });
 
-  it('Post user com campo district inválido', async function () {
+  it('Put user/:id com campo district inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -458,10 +451,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "district" deve ter mais de 2 caracteres');
   });
 
-  it('Post user com campo street faltando', async function () {
+  it('Put user/:id com campo street faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -480,10 +473,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo street requerido');
   });
 
-  it('Post user com campo district inválido', async function () {
+  it('Put user/:id com campo district inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -503,10 +496,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "street" deve ter mais de 2 caracteres');
   });
 
-  it('Post user com campo number faltando', async function () {
+  it('Put user/:id com campo number faltando', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -525,10 +518,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('Campo number requerido');
   });
 
-  it('Post user com campo number sendo número inválido', async function () {
+  it('Put user/:id com campo number sendo número inválido', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -548,10 +541,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "number" deve ver maior que 0');
   });
 
-  it('Post user com campo number sendo uma string', async function () {
+  it('Put user/:id com campo number sendo uma string', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
@@ -571,10 +564,10 @@ describe('Post /user', function () {
     expect(response.body.message).to.equal('O "number" deve ser um número');
   });
 
-  it('Post user com campo complement faltando ', async function () {
+  it('Put user/:id com campo complement faltando ', async function () {
 
     const response = await chai.request(app)
-      .post('/user')
+      .put('/user/2')
       .set('authorization', '52aedf85d7542e28')
       .send({
         name: 'Carlos',
